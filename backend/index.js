@@ -5,7 +5,7 @@ import {v2 as cloudinary} from 'cloudinary'
 
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
-
+import postRoutes from './routes/post.route.js'
 
 import connectMongoDB from './database/connectMongoDB.js';
 import cookieParser from 'cookie-parser';
@@ -27,6 +27,7 @@ app.use(cookieParser())
 
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
+app.use("/api/post",postRoutes);
 
 
 

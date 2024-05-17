@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeltons/rightPanelSkelton";
 import {useQuery} from "@tanstack/react-query";
+import UseFollow from "../../hooks/useFollow";
 
-
+import LoadingSpinner from './loadingSpinner'
 
 const RightPanel = () => {
 	
@@ -21,6 +22,9 @@ const RightPanel = () => {
 			}
 		}
 	})
+
+	const {follow,isPending} =UseFollow();
+
 	if(suggestedUsers?.length ===0 ) return <div className="md:w-64 w-0"></div>
 	return (
 		<div className='hidden lg:block my-4 mx-2'>
@@ -59,9 +63,12 @@ const RightPanel = () => {
 								<div>
 									<button
 										className='btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm'
-										onClick={(e) => e.preventDefault()}
+										onClick={(e) => {
+											e.preventDefault();
+											follow(user._id);
+										}}
 									>
-										Follow
+										{isPending?<LoadingSpinner size="sm" /> : "follow"}
 									</button>
 								</div>
 							</Link>

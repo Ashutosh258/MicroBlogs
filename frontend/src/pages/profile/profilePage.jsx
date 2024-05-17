@@ -11,7 +11,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import UseFollow from "../../hooks/useFollow";
 
@@ -29,6 +29,8 @@ const ProfilePage = () => {
   const { username } = useParams();
   const {follow,isPending}=UseFollow(username);
    
+  const queryClient=useQueryClient();
+
   const {data:authUser}=useQuery({queryKey:["authUser"]}); 
 
   const { data:user, isLoading,refetch,isRefetching } = useQuery({
@@ -70,10 +72,15 @@ const ProfilePage = () => {
           }
       },
       onSuccess:()=>{
-          setCoverImg(null);
-          setProfileImg(null);
-          refetch();
-      }
+         toast.success("profile updated successfully")
+         Promise.all([
+            queryClient.invalidateQueries({queryKey:"userProfile"}),
+            queryClient.invalidateQueries({queryKey:"authUser"}),
+         ])
+      },
+      onError:(error)=>{
+          toast.error(error.message);
+      } 
   })
 
 
@@ -185,9 +192,9 @@ const ProfilePage = () => {
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => alert("Profile updated successfully")}
+                    onClick={() => updateProfile()}
                   >
-                    Update
+                    {isUpdatingProfile? "Updating" : "Update"}
                   </button>
                 )}
               </div>
